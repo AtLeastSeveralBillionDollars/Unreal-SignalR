@@ -205,6 +205,7 @@ public:
 	        BooleanValue = OtherValue.BooleanValue;
 	        break;
 	    case EValueType::Object:
+	        ObjectValue.Release();
 	        ObjectValue = MakeUnique<TMap<FString, FSignalRValue>>(*OtherValue.ObjectValue);
 	        break;
 	    case EValueType::Binary:
@@ -236,6 +237,7 @@ public:
 	        BooleanValue = MoveTemp(OtherValue.BooleanValue);
 	        break;
 	    case EValueType::Object:
+	        ObjectValue.Release();
 	        ObjectValue = MoveTemp(OtherValue.ObjectValue);
 	        break;
 	    case EValueType::Binary:
