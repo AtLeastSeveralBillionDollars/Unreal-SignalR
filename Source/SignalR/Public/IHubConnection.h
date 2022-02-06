@@ -27,6 +27,15 @@
 #include "CoreMinimal.h"
 #include "SignalRValue.h"
 
+UENUM(BlueprintType)
+enum class EHubConnectionState : uint8
+{
+    Connecting,
+    Connected,
+    Disconnecting,
+    Disconnected
+};
+
 class SIGNALR_API IHubConnection : public TSharedFromThis<IHubConnection>
 {
 public:
@@ -73,6 +82,8 @@ public:
         static_assert(TAnd<TIsConstructible<FSignalRValue, ArgTypes>...>::Value, "Invalid argument type passed to IHubConnection::Send");
         Send(EventName, TArray<FSignalRValue> { MoveTemp(Arguments)... });
     }
+
+    virtual EHubConnectionState GetConnectionState() const = 0;
 
 protected:
 

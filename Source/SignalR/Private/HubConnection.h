@@ -81,18 +81,13 @@ public:
         return true;
     }
 
+    virtual EHubConnectionState GetConnectionState() const override;
+
 protected:
     void ProcessMessage(const FString& InMessageStr);
 
 private:
-    enum class EConnectionState
-    {
-        Connecting,
-        Connected,
-        Disconnecting,
-        Disconnected,
-    };
-    EConnectionState ConnectionState;
+    EHubConnectionState ConnectionState;
 
     void OnConnectionStarted();
     void OnConnectionError(const FString& /* Error */);

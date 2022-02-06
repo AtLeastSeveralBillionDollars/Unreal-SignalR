@@ -32,7 +32,7 @@
 
 FHubConnection::FHubConnection(const FString& InUrl, const TMap<FString, FString>& InHeaders):
     FTickableGameObject(),
-    ConnectionState(EConnectionState::Disconnected),
+    ConnectionState(EHubConnectionState::Disconnected),
     Host(InUrl),
     HubProtocol(MakeShared<FJsonHubProtocol>())
 {
@@ -55,24 +55,24 @@ FHubConnection::~FHubConnection()
 
 void FHubConnection::Start()
 {
-    if (ConnectionState != EConnectionState::Disconnected)
+    if (ConnectionState != EHubConnectionState::Disconnected)
     {
         UE_LOG(LogSignalR, Error, TEXT("Hub connection can only be started if it is in the disconnected state"));
         return;
     }
-    ConnectionState = EConnectionState::Connecting;
+    ConnectionState = EHubConnectionState::Connecting;
     Connection->Connect();
 }
 
 void FHubConnection::Stop()
 {
-    if (ConnectionState == EConnectionState::Disconnected)
+    if (ConnectionState == EHubConnectionState::Disconnected)
     {
         UE_LOG(LogSignalR, Log, TEXT("Stop ignored because the connection is already disconnected"));
         return;
     }
     SendCloseMessage();
-    ConnectionState = EConnectionState::Disconnecting;
+    ConnectionState = EHubConnectionState::Disconnecting;
     Connection->Close();
 }
 
@@ -122,6 +122,11 @@ TStatId FHubConnection::GetStatId() const
     RETURN_QUICK_DECLARE_CYCLE_STAT(FHubConnection, STATGROUP_Tickables);
 }
 
+EHubConnectionState FHubConnection::GetConnectionState() const
+{
+    return ConnectionState;
+}
+
 void FHubConnection::ProcessMessage(const FString& InMessageStr)
 {
     FString MessageStr = InMessageStr;
@@ -147,7 +152,7 @@ void FHubConnection::ProcessMessage(const FString& InMessageStr)
             else
             {
                 bHandshakeReceived = true;
-                ConnectionState = EConnectionState::Connected;
+                ConnectionState = EHubConnectionState::Connected;
                 OnHubConnectedEvent.Broadcast();
 
                 MessageStr = Res.Get<1>();
@@ -272,7 +277,7 @@ void FHubConnection::OnConnectionClosed(int32 StatusCode, const FString& Reason,
 	{
         CallbackManager.Clear(TEXT("Connection was stopped before invocation result was received."));
 	}
-    ConnectionState = EConnectionState::Disconnected;
+    ConnectionState = EHubConnectionState::Disconnected;
     OnHubConnectionClosedEvent.Broadcast();
 
     if (bReceivedCloseMessage)
