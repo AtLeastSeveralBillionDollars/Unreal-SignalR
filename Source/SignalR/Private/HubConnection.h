@@ -83,6 +83,8 @@ public:
 
     virtual EHubConnectionState GetConnectionState() const override;
 
+    virtual void SetHeaders(const TMap<FString, FString>& Headers) override;
+
 protected:
     void ProcessMessage(const FString& InMessageStr);
 

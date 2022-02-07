@@ -33,6 +33,8 @@ class SIGNALR_API FConnection : public TSharedFromThis<FConnection>
 public:
     FConnection(const FString& InHost, const TMap<FString, FString>& InHeaders);
 
+    void SetHeaders(const TMap<FString, FString>& InHeaders);
+
     void Connect();
 
     bool IsConnected();

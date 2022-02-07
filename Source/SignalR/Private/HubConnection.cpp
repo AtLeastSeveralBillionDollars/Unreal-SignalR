@@ -127,6 +127,11 @@ EHubConnectionState FHubConnection::GetConnectionState() const
     return ConnectionState;
 }
 
+void FHubConnection::SetHeaders(const TMap<FString, FString>& Headers)
+{
+    Connection->SetHeaders(Headers);
+}
+
 void FHubConnection::ProcessMessage(const FString& InMessageStr)
 {
     FString MessageStr = InMessageStr;

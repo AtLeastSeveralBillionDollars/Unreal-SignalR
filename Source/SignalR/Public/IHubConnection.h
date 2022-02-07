@@ -85,6 +85,8 @@ public:
 
     virtual EHubConnectionState GetConnectionState() const = 0;
 
+    virtual void SetHeaders(const TMap<FString, FString>& Headers) = 0;
+
 protected:
 
     /**

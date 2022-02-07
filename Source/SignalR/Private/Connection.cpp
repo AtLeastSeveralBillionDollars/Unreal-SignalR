@@ -39,6 +39,11 @@ FConnection::FConnection(const FString& InHost, const TMap<FString, FString>& In
 {
 }
 
+void FConnection::SetHeaders(const TMap<FString, FString>& InHeaders)
+{
+    Headers = InHeaders;
+}
+
 void FConnection::Connect()
 {
     Negotiate();
