@@ -36,9 +36,9 @@ FCallbackManager::~FCallbackManager()
 
 TTuple<FName, IHubConnection::FOnMethodCompletion&> FCallbackManager::RegisterCallback()
 {
+    FScopeLock Lock(&CallbacksLock);
     FName Id = GenerateCallbackId();
 
-    FScopeLock Lock(&CallbacksLock);
     IHubConnection::FOnMethodCompletion& qssq = Callbacks.Add(Id);
 
     return TTuple<FName, IHubConnection::FOnMethodCompletion&>(Id, qssq);
@@ -81,10 +81,10 @@ void FCallbackManager::Clear(const FString& ErrorMessage)
     {
         FScopeLock Lock(&CallbacksLock);
 
-        for (auto& El : Callbacks)
+        /*for (auto& El : Callbacks)
         {
             El.Value.ExecuteIfBound(FSignalRValue()); // TODO send error message
-        }
+        }*/
 
         Callbacks.Empty();
     }
@@ -92,6 +92,14 @@ void FCallbackManager::Clear(const FString& ErrorMessage)
 
 FName FCallbackManager::GenerateCallbackId()
 {
-    const auto CallbackId = CurrentId++;
-    return *FString::FromInt(CallbackId);
+    FScopeLock Lock(&CallbacksLock);
+
+    FName Id = NAME_None;
+    do
+    {
+       Id = *FGuid::NewGuid().ToString();
+    }
+    while(Callbacks.Contains(Id));
+
+    return Id;
 }

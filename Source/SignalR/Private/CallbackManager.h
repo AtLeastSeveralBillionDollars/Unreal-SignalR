@@ -43,6 +43,4 @@ private:
 
     TMap<FName, IHubConnection::FOnMethodCompletion> Callbacks;
     FCriticalSection CallbacksLock;
-
-    TAtomic<int> CurrentId;
 };
